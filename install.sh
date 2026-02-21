@@ -215,6 +215,12 @@ run_part2() {
     fi
     
     if [ -z "$CONFIG_USERNAME" ]; then
+        print_warning "State file incompleto/ausente. Tentando fallback por detecção do sistema..."
+        recover_state_from_system
+        load_state_file
+    fi
+
+    if [ -z "$CONFIG_USERNAME" ]; then
         print_error "Configuration missing. Cannot proceed with Part 2."
         exit 1
     fi

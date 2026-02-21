@@ -297,9 +297,19 @@ The setup script automatically configures all PATHs and verifies each installati
 
 ### Part 2 can't find configuration
 
-**Error:** `Configuration file not found: .setup_state`
+**Error:** `Configuration missing. Cannot proceed with Part 2.`
 
-**Solution:** Run Part 1 (`setup.sh`) first. It creates the `.setup_state` file that Part 2 needs.
+**Quick fix:** run the installer again with sudo. The script now attempts to rebuild `.install_state` automatically from detected system/user installs and continue with Part 2.
+
+```bash
+sudo ./install.sh
+```
+
+If you want to force only the post-reboot stage:
+
+```bash
+sudo ./install.sh --post-reboot
+```
 
 ### Homebrew installation failed
 
