@@ -280,6 +280,43 @@ run_part2() {
     echo -e "\n${GREEN}${BOLD}Installation Complete! Please log out and log back in.${NC}\n"
 }
 
+repair_zsh_setup() {
+    print_step "Repairing Zsh + Spaceship configuration"
+
+    # Try state file first
+    if [ -z "$CONFIG_USERNAME" ] || [ -z "$CONFIG_HOME" ]; then
+        load_state_file
+    fi
+
+    # Fallback to system detection if needed
+    if [ -z "$CONFIG_USERNAME" ] || [ -z "$CONFIG_HOME" ]; then
+        recover_state_from_system
+        load_state_file
+    fi
+
+    if [ -z "$CONFIG_USERNAME" ] || [ -z "$CONFIG_HOME" ]; then
+        print_error "Unable to detect target user/home for repair."
+        exit 1
+    fi
+
+    INSTALL_ZSH=true
+    INSTALL_OH_MY_ZSH=true
+    INSTALL_ZSH_PLUGINS=true
+
+    setup_zsh
+    install_zsh_plugins
+
+    if [ -d "$CONFIG_DIR" ]; then
+        [ -f "$CONFIG_DIR/.zshrc" ] && sudo -u "$CONFIG_USERNAME" cp "$CONFIG_DIR/.zshrc" "${CONFIG_HOME}/.zshrc"
+        [ -f "$CONFIG_DIR/.spaceshiprc.zsh" ] && sudo -u "$CONFIG_USERNAME" cp "$CONFIG_DIR/.spaceshiprc.zsh" "${CONFIG_HOME}/.spaceshiprc.zsh"
+        print_success "Zsh config files updated"
+    fi
+
+    sudo -u "$CONFIG_USERNAME" chmod 755 "${CONFIG_HOME}/.oh-my-zsh" "${CONFIG_HOME}/.oh-my-zsh/custom" 2>/dev/null
+
+    print_success "Repair completed. Open a new terminal or run: source ~/.zshrc"
+}
+
 ################################################################################
 # Reboot Handling
 ################################################################################
@@ -324,6 +361,17 @@ EOF
 
 main() {
     ensure_sudo
+
+    # Command flags
+    if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+        echo "Usage: ./install.sh [--post-reboot|--repair-zsh|--help]"
+        exit 0
+    fi
+
+    if [ "$1" == "--repair-zsh" ]; then
+        repair_zsh_setup
+        exit 0
+    fi
 
     # Check for post-reboot flag
     if [ "$1" == "--post-reboot" ]; then
