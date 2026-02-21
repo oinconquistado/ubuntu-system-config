@@ -78,6 +78,16 @@ print_info() {
     log_msg "INFO: $1"
 }
 
+decode_shell_escaped_value() {
+    python3 -c 'import shlex, sys
+value = sys.argv[1]
+try:
+    tokens = shlex.split(value, posix=True)
+    print(tokens[0] if tokens else "")
+except Exception:
+    print(value)' "$1"
+}
+
 load_state_file() {
     [ -f "$STATE_FILE" ] || return 0
 
@@ -94,12 +104,18 @@ load_state_file() {
         # Accept only valid shell variable names
         [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
 
-        # Load only known state keys and unescape values produced by printf %q
+        # Load only known state keys
         case "$key" in
-            CONFIG_USERNAME|CONFIG_HOME|INSTALL_ZSH|INSTALL_WEZTERM|INSTALL_VIVALDI|INSTALL_VSCODIUM|INSTALL_VSCODE|FLATPAK_JUST_INSTALLED|PART1_COMPLETED|PART1_COMPLETION_DATE|PART2_COMPLETED)
-                eval "decoded_value=${value}"
+            CONFIG_USERNAME|CONFIG_HOME|PART1_COMPLETION_DATE)
+                decoded_value="$(decode_shell_escaped_value "$value")"
                 printf -v "$key" '%s' "$decoded_value"
                 export "$key"
+                ;;
+            INSTALL_ZSH|INSTALL_WEZTERM|INSTALL_VIVALDI|INSTALL_VSCODIUM|INSTALL_VSCODE|FLATPAK_JUST_INSTALLED|PART1_COMPLETED|PART2_COMPLETED)
+                if [[ "$value" == "true" || "$value" == "false" ]]; then
+                    printf -v "$key" '%s' "$value"
+                    export "$key"
+                fi
                 ;;
             *)
                 ;;
