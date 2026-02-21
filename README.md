@@ -26,6 +26,7 @@ Automated setup scripts to configure a complete Ubuntu development environment w
 - **pnpm** - Fast, disk space efficient package manager - *Optional*
 - **Deno** - Modern JavaScript/TypeScript runtime - *Optional*
 - **Bun** - Fast all-in-one JavaScript runtime - *Optional*
+- **Flutter SDK** - UI toolkit and CLI (`flutter`, `dart`)
 - **Homebrew** - Package manager for Linux - *Optional*
 - **GitHub CLI (gh)** - Official GitHub command-line tool - *Optional*
 - **VSCodium** - Open-source build of VS Code without telemetry - *Optional* (Recommended)
