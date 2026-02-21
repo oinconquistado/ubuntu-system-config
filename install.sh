@@ -140,6 +140,40 @@ PART2_COMPLETED=${PART2_COMPLETED:-false}
 EOF
 }
 
+recover_state_from_system() {
+    local detected_user=""
+    local detected_home=""
+
+    # Prefer the invoking user when script is executed via sudo.
+    if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
+        detected_user="$SUDO_USER"
+    fi
+
+    # Fallbacks for direct shell execution.
+    if [ -z "$detected_user" ]; then
+        detected_user="$(logname 2>/dev/null || true)"
+        [ "$detected_user" = "root" ] && detected_user=""
+    fi
+
+    if [ -z "$detected_user" ]; then
+        detected_user="$(awk -F: '$3 >= 1000 && $3 < 65534 && $1 != "nobody" {print $1; exit}' /etc/passwd)"
+    fi
+
+    [ -n "$detected_user" ] && detected_home="$(getent passwd "$detected_user" | cut -d: -f6)"
+
+    if [ -n "$detected_user" ] && [ -n "$detected_home" ] && [ -d "$detected_home" ]; then
+        CONFIG_USERNAME="$detected_user"
+        CONFIG_HOME="$detected_home"
+        export CONFIG_USERNAME CONFIG_HOME
+        save_state_file
+        print_info "Recovered target user from system: ${CONFIG_USERNAME} (${CONFIG_HOME})"
+        return 0
+    fi
+
+    print_warning "Could not recover CONFIG_USERNAME/CONFIG_HOME from system state."
+    return 1
+}
+
 
 part1_already_completed() {
     [ -f "$STATE_FILE" ] || return 1
