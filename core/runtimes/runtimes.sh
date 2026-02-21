@@ -10,9 +10,22 @@ install_runtimes() {
 
     # Bun
     if [ "$INSTALL_BUN" = true ]; then
-        print_step "Installing Bun"
-        sudo -u "$CONFIG_USERNAME" bash -c 'curl -fsSL https://bun.sh/install | bash'
-        print_success "Bun installed"
+        if [ -x "${CONFIG_HOME}/.bun/bin/bun" ]; then
+            print_success "Bun already installed"
+        else
+            print_step "Installing Bun"
+            sudo -u "$CONFIG_USERNAME" bash -c 'curl -fsSL https://bun.sh/install | bash'
+            print_success "Bun installed"
+        fi
+    fi
+
+    # Flutter SDK
+    if [ ! -d "${CONFIG_HOME}/flutter/bin" ]; then
+        print_step "Installing Flutter SDK"
+        sudo -u "$CONFIG_USERNAME" bash -c 'git clone https://github.com/flutter/flutter.git -b stable "$HOME/flutter"'
+        print_success "Flutter SDK installed"
+    else
+        print_success "Flutter SDK already installed"
     fi
 
     # Turso CLI
