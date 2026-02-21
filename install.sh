@@ -88,6 +88,38 @@ except Exception:
     print(value)' "$1"
 }
 
+resolve_target_user_home() {
+    # Keep existing values if valid
+    if [ -n "$CONFIG_USERNAME" ] && [ -n "$CONFIG_HOME" ] && [ -d "$CONFIG_HOME" ]; then
+        return 0
+    fi
+
+    # Prefer sudo invoker when running as root
+    if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
+        CONFIG_USERNAME="$SUDO_USER"
+    elif [ -n "$CONFIG_USERNAME" ] && [ "$CONFIG_USERNAME" != "root" ]; then
+        :
+    elif [ -n "$USER" ] && [ "$USER" != "root" ]; then
+        CONFIG_USERNAME="$USER"
+    else
+        CONFIG_USERNAME="$(logname 2>/dev/null || true)"
+    fi
+
+    # Resolve home from passwd database when possible
+    if [ -n "$CONFIG_USERNAME" ]; then
+        CONFIG_HOME="$(getent passwd "$CONFIG_USERNAME" | cut -d: -f6)"
+    fi
+
+    # Last fallback to current HOME (only if it exists)
+    if [ -z "$CONFIG_HOME" ] || [ ! -d "$CONFIG_HOME" ]; then
+        if [ -n "$HOME" ] && [ -d "$HOME" ]; then
+            CONFIG_HOME="$HOME"
+        fi
+    fi
+
+    [ -n "$CONFIG_USERNAME" ] && [ -n "$CONFIG_HOME" ] && [ -d "$CONFIG_HOME" ]
+}
+
 load_state_file() {
     [ -f "$STATE_FILE" ] || return 0
 
@@ -214,13 +246,13 @@ run_part2() {
         load_state_file
     fi
     
-    if [ -z "$CONFIG_USERNAME" ]; then
+    if ! resolve_target_user_home; then
         print_warning "State file incompleto/ausente. Tentando fallback por detecção do sistema..."
-        recover_state_from_system
-        load_state_file
+        detect_system_info
+        resolve_target_user_home || true
     fi
 
-    if [ -z "$CONFIG_USERNAME" ]; then
+    if ! resolve_target_user_home; then
         print_error "Configuration missing. Cannot proceed with Part 2."
         exit 1
     fi
@@ -280,6 +312,44 @@ run_part2() {
     echo -e "\n${GREEN}${BOLD}Installation Complete! Please log out and log back in.${NC}\n"
 }
 
+repair_zsh_setup() {
+    print_step "Repairing Zsh + Spaceship configuration"
+
+    # Try state file first
+    if [ -z "$CONFIG_USERNAME" ] || [ -z "$CONFIG_HOME" ]; then
+        load_state_file
+        resolve_target_user_home || true
+    fi
+
+    # Fallback to system detection if needed
+    if ! resolve_target_user_home; then
+        detect_system_info
+        resolve_target_user_home || true
+    fi
+
+    if ! resolve_target_user_home; then
+        print_error "Unable to detect target user/home for repair."
+        exit 1
+    fi
+
+    INSTALL_ZSH=true
+    INSTALL_OH_MY_ZSH=true
+    INSTALL_ZSH_PLUGINS=true
+
+    setup_zsh
+    install_zsh_plugins
+
+    if [ -d "$CONFIG_DIR" ]; then
+        [ -f "$CONFIG_DIR/.zshrc" ] && sudo -u "$CONFIG_USERNAME" cp "$CONFIG_DIR/.zshrc" "${CONFIG_HOME}/.zshrc"
+        [ -f "$CONFIG_DIR/.spaceshiprc.zsh" ] && sudo -u "$CONFIG_USERNAME" cp "$CONFIG_DIR/.spaceshiprc.zsh" "${CONFIG_HOME}/.spaceshiprc.zsh"
+        print_success "Zsh config files updated"
+    fi
+
+    sudo -u "$CONFIG_USERNAME" chmod 755 "${CONFIG_HOME}/.oh-my-zsh" "${CONFIG_HOME}/.oh-my-zsh/custom" 2>/dev/null
+
+    print_success "Repair completed. Open a new terminal or run: source ~/.zshrc"
+}
+
 ################################################################################
 # Reboot Handling
 ################################################################################
@@ -324,6 +394,17 @@ EOF
 
 main() {
     ensure_sudo
+
+    # Command flags
+    if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+        echo "Usage: ./install.sh [--post-reboot|--repair-zsh|--help]"
+        exit 0
+    fi
+
+    if [ "$1" == "--repair-zsh" ]; then
+        repair_zsh_setup
+        exit 0
+    fi
 
     # Check for post-reboot flag
     if [ "$1" == "--post-reboot" ]; then

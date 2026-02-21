@@ -87,11 +87,12 @@ You can also use `install.sh` with command line arguments:
 # Run full installation
 ./install.sh --post-reboot  # Used internally after reboot
 
+# Repair Zsh/Spaceship setup (missing plugins, duplicated prompt warnings)
+./install.sh --repair-zsh
+
 # Verify installation
 ./verify.sh
 ```
-
-**Tip:** Use `repair --auto` in scripts or CI/CD to check installation status without interaction.
 
 ### Manual Installation
 
@@ -99,6 +100,9 @@ The `install.sh` script handles both parts of the installation automatically. If
 
 ```bash
 sudo ./install.sh --post-reboot
+
+# Se o problema for apenas Zsh/Spaceship (plugins faltando ou warnings duplicados)
+sudo ./install.sh --repair-zsh
 ```
 
 #### Step 4: Verify Installation (Optional but Recommended)
