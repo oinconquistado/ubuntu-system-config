@@ -114,6 +114,13 @@ PART2_COMPLETED=${PART2_COMPLETED:-false}
 EOF
 }
 
+
+part1_already_completed() {
+    [ -f "$STATE_FILE" ] || return 1
+    load_state_file
+    [ "$PART1_COMPLETED" = true ]
+}
+
 ensure_sudo() {
     if [ "$EUID" -ne 0 ]; then
         print_warning "Esta operação requer privilégios de superusuário."
@@ -292,12 +299,19 @@ main() {
         exit 0
     fi
 
+    # If pre-reboot setup is already done, skip directly to post-reboot
+    if part1_already_completed; then
+        print_info "Part 1 já foi concluída anteriormente. Pulando para pós-reboot."
+        run_part2
+        exit 0
+    fi
+
     # Interactive Setup
     run_configuration
-    
+
     # Run Part 1
     run_part1
-    
+
     # Check if reboot needed
     if grep -q "FLATPAK_JUST_INSTALLED=true" "$STATE_FILE" 2>/dev/null; then
         handle_reboot
