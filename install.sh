@@ -89,11 +89,21 @@ load_state_file() {
 
         local key="${line%%=*}"
         local value="${line#*=}"
+        local decoded_value=""
 
         # Accept only valid shell variable names
         [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
-        printf -v "$key" '%s' "$value"
-        export "$key"
+
+        # Load only known state keys and unescape values produced by printf %q
+        case "$key" in
+            CONFIG_USERNAME|CONFIG_HOME|INSTALL_ZSH|INSTALL_WEZTERM|INSTALL_VIVALDI|INSTALL_VSCODIUM|INSTALL_VSCODE|FLATPAK_JUST_INSTALLED|PART1_COMPLETED|PART1_COMPLETION_DATE|PART2_COMPLETED)
+                eval "decoded_value=${value}"
+                printf -v "$key" '%s' "$decoded_value"
+                export "$key"
+                ;;
+            *)
+                ;;
+        esac
     done < "$STATE_FILE"
 }
 
