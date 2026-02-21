@@ -8,6 +8,6 @@ setup_flatpak() {
         print_success "Flatpak installed"
         
         # Mark that we need a reboot for Flatpak
-        echo "FLATPAK_JUST_INSTALLED=true" >> "$STATE_FILE"
+        FLATPAK_JUST_INSTALLED=true
     fi
 }
