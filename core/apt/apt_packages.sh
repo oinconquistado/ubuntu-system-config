@@ -31,6 +31,16 @@ install_apt_packages() {
         print_success "Optional packages installed"
     fi
 
+
+    # Android platform-tools (adb/fastboot)
+    if ! command -v adb &>/dev/null; then
+        print_step "Installing Android platform-tools"
+        apt install -y android-sdk-platform-tools
+        print_success "Android platform-tools installed"
+    else
+        print_success "Android platform-tools already installed"
+    fi
+
     # FUSE
     if [ "$INSTALL_FUSE" = true ]; then
         local major_version=$(echo "$CONFIG_UBUNTU_VERSION" | cut -d'.' -f1)

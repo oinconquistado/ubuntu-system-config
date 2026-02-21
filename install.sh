@@ -138,25 +138,27 @@ run_part1() {
     setup_apt
     install_apt_packages
 
-    # 2. Node.js & NPM
+    # 2. Node.js
     setup_node
+
+    # 3. Runtimes (Deno/Bun + CLIs)
+    install_runtimes
+
+    # 4. Global JS Packages
     install_npm_packages
 
-    # 3. Zsh Setup
+    # 5. Zsh Setup
     setup_zsh
     install_zsh_plugins
 
-    # 4. Homebrew
+    # 6. Homebrew
     setup_homebrew
     install_homebrew_packages
 
-    # 5. Runtimes (Deno/Bun)
-    install_runtimes
-
-    # 6. Editors
+    # 7. Editors
     install_editors
 
-    # 7. Flatpak Setup (System)
+    # 8. Flatpak Setup (System)
     setup_flatpak
 
     # Save state
