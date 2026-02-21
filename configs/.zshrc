@@ -46,12 +46,13 @@ plugins=(
   git sudo
   zsh-autosuggestions
   zsh-syntax-highlighting
+  spaceship-vi-mode
   spaceship-react
+  spaceship-flutter
+  spaceship-vue
+  spaceship-gradle
 )
 source_if "$ZSH/oh-my-zsh.sh"
-
-# Spaceship config
-source_if "$HOME/.spaceshiprc.zsh"
 
 # --- PATHs comuns ---
 path_add "$HOME/.local/bin"
