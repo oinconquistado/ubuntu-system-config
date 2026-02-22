@@ -1,0 +1,43 @@
+[2026-02-22 02:59:23] STEP: Starting Part 1: Pre-Reboot Setup
+[2026-02-22 02:59:23] STEP: Updating system packages
+[2026-02-22 02:59:27] SUCCESS: System updated successfully
+[2026-02-22 02:59:27] STEP: Installing system dependencies
+[2026-02-22 02:59:28] SUCCESS: Dependencies installed
+[2026-02-22 02:59:28] STEP: Installing optional APT packages
+[2026-02-22 02:59:29] SUCCESS: Optional packages installed
+[2026-02-22 02:59:29] STEP: Installing Vivaldi (APT .deb)
+[2026-02-22 02:59:57] SUCCESS: Vivaldi installed
+[2026-02-22 02:59:57] SUCCESS: Android platform-tools already installed
+[2026-02-22 02:59:57] STEP: Installing Node.js latest
+[2026-02-22 03:00:00] SUCCESS: Node.js latest installed
+[2026-02-22 03:00:00] STEP: Installing Deno
+[2026-02-22 03:00:31] SUCCESS: Deno installed
+[2026-02-22 03:00:31] SUCCESS: Bun already installed
+[2026-02-22 03:00:31] SUCCESS: Flutter SDK already installed
+[2026-02-22 03:00:31] STEP: Installing Turso CLI
+[2026-02-22 03:00:37] SUCCESS: Turso CLI installed
+[2026-02-22 03:00:37] STEP: Installing Sentry CLI
+[2026-02-22 03:00:37] SUCCESS: Sentry CLI installed
+[2026-02-22 03:00:37] STEP: Installing Render CLI
+[2026-02-22 03:00:40] SUCCESS: Render CLI installed via installer
+[2026-02-22 03:00:40] STEP: Installing global JS packages with Bun
+[2026-02-22 03:00:41] SUCCESS: Global JS packages installed with Bun (pnpm, biome, turbo)
+[2026-02-22 03:00:41] STEP: Installing Oh-My-Zsh
+[2026-02-22 03:00:41] SUCCESS: Oh-My-Zsh already installed
+[2026-02-22 03:00:41] STEP: Installing Zsh Plugins & Spaceship
+[2026-02-22 03:00:42] SUCCESS: Zsh plugins and theme installed
+[2026-02-22 03:00:42] STEP: Installing Homebrew
+[2026-02-22 03:00:52] SUCCESS: Homebrew installed
+[2026-02-22 03:00:52] STEP: Installing GCC via Homebrew
+[2026-02-22 03:00:54] STEP: Installing GitHub CLI
+[2026-02-22 03:01:00] STEP: Installing MongoDB CLI (mongocli)
+[2026-02-22 03:01:06] STEP: Installing Railway CLI
+[2026-02-22 03:01:12] STEP: Installing Render CLI
+[2026-02-22 03:01:18] SUCCESS: Homebrew packages installed
+[2026-02-22 03:01:18] STEP: Installing VSCodium
+[2026-02-22 03:01:22] SUCCESS: VSCodium installed
+[2026-02-22 03:01:22] STEP: Installing Flatpak
+[2026-02-22 03:01:24] SUCCESS: Flatpak installed
+[2026-02-22 03:01:24] SUCCESS: Part 1 completed successfully!
+[2026-02-22 03:01:42] SUCCESS: Auto-run service created.
+[2026-02-22 03:01:42] STEP: Rebooting in 5 seconds...

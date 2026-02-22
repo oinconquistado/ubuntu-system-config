@@ -1,0 +1,12 @@
+[2026-02-22 03:04:22] STEP: Starting Part 2: Post-Reboot Setup
+[2026-02-22 03:04:22] STEP: Installing Flatpak Applications
+[2026-02-22 03:04:24] SUCCESS: Flatpak apps installed
+[2026-02-22 03:04:24] STEP: Copying configuration files
+[2026-02-22 03:04:24] SUCCESS: Configuration files copied
+[2026-02-22 03:04:24] STEP: Fixing Zsh permissions
+[2026-02-22 03:04:24] SUCCESS: Permissions fixed
+[2026-02-22 03:04:24] STEP: Configuring GNOME Favorites
+[2026-02-22 03:04:24] SUCCESS: Favorites configured
+[2026-02-22 03:04:24] STEP: Configuring WezTerm
+[2026-02-22 03:04:24] INFO: Note: Keyboard shortcuts configuration skipped in simplified installer. Please configure manually if needed.
+[2026-02-22 03:04:24] SUCCESS: Part 2 completed successfully!
